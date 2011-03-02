@@ -1,0 +1,41 @@
+---
+abstract: 'Tapper - Extended DPath functionality for Tapper reports'
+author:
+  - 'AMD OSRC Tapper Team, C<< <tapper at amd64.org> >>'
+  - 'AMD OSRC Tapper Team <tapper@amd64.org>'
+build_requires:
+  ExtUtils::MakeMaker: 6.42
+  Tapper::Schema::TestTools: 0
+  Test::Fixture::DBIC::Schema: 0
+  Test::More: 0
+  Test::Perl::Critic: 0
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
+distribution_type: module
+generated_by: 'Module::Install version 1.00'
+license: freebsd
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Tapper-Reports-DPath
+no_index:
+  directory:
+    - inc
+    - t
+    - xt
+requires:
+  Cache::FileCache: 0
+  Data::DPath: 0.33
+  Data::Structure::Util: 0
+  DateTime: 0
+  File::ShareDir: 0
+  HTML::Mason: 1.40
+  JSON: 0
+  Sub::Exporter: 0.982
+  Tapper::Config: 3.000001
+  Tapper::Model: 3.000001
+  Tapper::Schema: 3.000001
+  Template: 0
+  parent: 0
+  perl: 5.01
+version: 3.000001
