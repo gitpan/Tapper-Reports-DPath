@@ -32,10 +32,10 @@ requires:
   HTML::Mason: 1.40
   JSON: 0
   Sub::Exporter: 0.982
-  Tapper::Config: 3.000001
-  Tapper::Model: 3.000001
-  Tapper::Schema: 3.000001
+  Tapper::Config: 3.000002
+  Tapper::Model: 3.000002
+  Tapper::Schema: 3.000002
   Template: 0
   parent: 0
   perl: 5.01
-version: 3.000001
+version: 3.000002
