@@ -20,7 +20,6 @@ META.yml
 README
 t/00-load.t
 t/00-tapper-meta.t
-t/boilerplate.t
 t/dpath_mason.t
 t/dpath_tt.t
 t/dpath_tt_utilmethods.t
