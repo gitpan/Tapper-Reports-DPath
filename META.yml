@@ -1,17 +1,18 @@
 ---
 abstract: 'Tapper - Extended DPath functionality for Tapper reports'
 author:
+  - 'AMD OSRC Tapper Team, C<< <tapper at amd64.org> >>'
   - 'AMD OSRC Tapper Team <tapper@amd64.org>'
 build_requires:
   ExtUtils::MakeMaker: 6.42
-  Tapper::Schema::TestTools: 0
+  Tapper::Schema::TestTools: 3.000010
   Test::Fixture::DBIC::Schema: 0
   Test::More: 0
   Test::Perl::Critic: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.91'
+generated_by: 'Module::Install version 1.00'
 license: freebsd
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -32,13 +33,13 @@ requires:
   JSON: 0
   MooseX::Declare: 0.34
   Sub::Exporter: 0.982
-  Tapper::Config: 3.000002
-  Tapper::Model: 3.000002
-  Tapper::Schema: 3.000002
+  Tapper::Config: 3.000010
+  Tapper::Model: 3.000010
+  Tapper::Schema: 3.000010
   Template: 0
   parent: 0
   perl: 5.01
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Tapper-Reports-DPath
   repository: git://github.com/amd/Tapper-Reports-DPath.git
-version: 3.000004
+version: 3.000010
