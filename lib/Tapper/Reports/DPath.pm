@@ -1,15 +1,23 @@
-use MooseX::Declare;
-
-use 5.010;
-
 ## no critic (RequireUseStrict)
-class Tapper::Reports::DPath is dirty {
+package Tapper::Reports::DPath;
+BEGIN {
+  $Tapper::Reports::DPath::AUTHORITY = 'cpan:AMD';
+}
+{
+  $Tapper::Reports::DPath::VERSION = '4.0.1';
+}
+# ABSTRACT: Tapper - Extended DPath functionality for Tapper reports
+
+        use 5.010;
+        use Moose;
 
         use Tapper::Model 'model', 'get_hardware_overview'; #, 'get_systems_id_for_hostname'
         use Text::Balanced 'extract_codeblock';
         use Data::DPath::Path;
         use Data::Dumper;
-        use Cache::FileCache;
+        use CHI;
+
+        our $puresqlabstract = 0;
 
         use Sub::Exporter -setup => { exports =>           [ 'reportdata' ],
                                       groups  => { all  => [ 'reportdata' ] },
@@ -36,12 +44,13 @@ class Tapper::Reports::DPath is dirty {
         sub _fix_condition
         {
                 no warnings 'uninitialized';
+                my $SQLKEYWORDS = 'like|-in|-and|-or';
                 my ($condition) = @_;
                 # joined suite
                 $condition      =~ s/(['"])?\bsuite_name\b(['"])?\s*=>/"suite.name" =>/;        # ';
                 $condition      =~ s/(['"])?\breportgroup_testrun_id\b(['"])?\s*=>/"reportgrouptestrun.testrun_id" =>/;                                             # ';
                 $condition      =~ s/(['"])?\breportgroup_arbitrary_id\b(['"])?\s*=>/"reportgrouparbitrary.arbitrary_id" =>/;                                       # ';
-                $condition      =~ s/([^-\w])(['"])?((report|me)\.)?(?<!suite\.)(?<!reportgrouparbitrary\.)(?<!reportgrouptestrun\.)(\w+)\b(['"])?(\s*)=>/$1"me.$5" =>/;        # ';
+                $condition      =~ s/([^-\w])(['"])?((report|me)\.)?(?<!suite\.)(?<!reportgrouparbitrary\.)(?<!reportgrouptestrun\.)(?!$SQLKEYWORDS)(\w+)\b(['"])?(\s*)=>/$1"me.$5" =>/;        # ';
 
                 return $condition;
 
@@ -62,8 +71,13 @@ class Tapper::Reports::DPath is dirty {
 
                 return if $ENV{HARNESS_ACTIVE};
 
-                my $cache = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
+                my $cache = CHI->new( driver => 'File',
+                                      root_dir => '/tmp/cache/dpath',
+                                      serializer => 'Data::Dumper',
+                                      compress => 1,
+                                    );
+
+                $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
 
                 # we cache on the dpath
                 # but need count to verify and maintain cache validity
@@ -81,8 +95,12 @@ class Tapper::Reports::DPath is dirty {
 
                 return if $ENV{HARNESS_ACTIVE};
 
-                my $cache      = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
+                my $cache = CHI->new( driver => 'File',
+                                      root_dir => '/tmp/cache/dpath',
+                                      serializer => 'Data::Dumper',
+                                      compress => 1,
+                                    );
+                $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
                 my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
 
                 my $cached_res_count = $cached_res->{count} || 0;
@@ -113,9 +131,12 @@ class Tapper::Reports::DPath is dirty {
 
                 return if $ENV{HARNESS_ACTIVE};
 
-                my $cache = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
-#                say STDERR "  -> set single: $reports_id -- $path";
+                my $cache = CHI->new( driver => 'File',
+                                      root_dir => '/tmp/cache/dpath',
+                                      serializer => 'Data::Dumper',
+                                      compress => 1,
+                                    );
+                $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
                 $cache->set( _cachekey_single_dpath( $path, $reports_id ),
                              $res
                            );
@@ -126,8 +147,12 @@ class Tapper::Reports::DPath is dirty {
 
                 return if $ENV{HARNESS_ACTIVE};
 
-                my $cache      = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
+                my $cache = CHI->new( driver => 'File',
+                                      root_dir => '/tmp/cache/dpath',
+                                      serializer => 'Data::Dumper',
+                                      compress => 1,
+                                    );
+                $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
                 my $cached_res = $cache->get( _cachekey_single_dpath( $path, $reports_id ));
 
 #                print STDERR "  <- get single: $reports_id -- $path: ".Dumper($cached_res);
@@ -141,8 +166,7 @@ class Tapper::Reports::DPath is dirty {
 
                 my ($condition, $path) = _extract_condition_and_part($reports_path);
                 my $dpath              = new Data::DPath::Path( path => $path );
-                $condition             = _fix_condition($condition);
-                #say STDERR "condition: ".($condition || '');
+                $condition             = _fix_condition($condition) unless $puresqlabstract;
                 my %condition          = $condition ? %{ eval $condition } : (); ## no critic (ProhibitStringyEval)
                 my $rs = model('ReportsDB')->resultset('Report')->search
                     (
@@ -313,6 +337,12 @@ class Tapper::Reports::DPath is dirty {
         {
                 my ($report) = @_;
 
+                my $hwdb;
+                if (my $host  = model('TestrunDB')->resultset("Host")->search({name => $report->machine_name})->first) {
+                        $hwdb = get_hardware_overview($host->id);
+                }
+                my %hardwaredb_overview = (defined($hwdb) and %$hwdb) ? (hardwaredb => $hwdb) : ();
+
                 my $reportgroupstats = _reportgroupstats($report);
 
                 my $simple_hash = {
@@ -324,6 +354,7 @@ class Tapper::Reports::DPath is dirty {
                                                     machine_name             => $report->machine_name || 'unknown',
                                                     created_at_ymd_hms       => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
                                                     created_at_ymd           => $report->created_at->ymd('-'),
+                                                    %hardwaredb_overview,
                                                     groupstats               => {
                                                                                  DEPRECATED => 'BETTER_USE_groupstats_FROM_ONE_LEVEL_ABOVE',
                                                                                  %$reportgroupstats,
@@ -335,15 +366,13 @@ class Tapper::Reports::DPath is dirty {
                                   };
                 return $simple_hash;
         }
-
-}
-
-package Tapper::Reports::DPath;
-our $VERSION = '3.000010';
-
 1;
 
-__END__
+
+
+=pod
+
+=encoding utf-8
 
 =head1 NAME
 
@@ -365,7 +394,6 @@ Tapper::Reports::DPath - Tapper - Extended DPath functionality for Tapper report
  # '{ "reportgrouptestrun.testrun_id" => 4711 } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id
  #
  # '{ "reportgrouparbitrary.arbitrary_id" => "fc123a2" } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id
-
 
 This searches all reports of the test suite "TestSuite-LmBench" and
 furthermore in them for a TAP section "math" with the particular
@@ -391,7 +419,6 @@ Alias for reports_dpath_search.
 
 Alias for reports_dpath_search.
 
-
 =head1 UTILITY FUNCTIONS
 
 =head2 cache_single_dpath
@@ -412,14 +439,19 @@ Return cached result for a complete tapper::dpath on all reports.
 
 =head1 AUTHOR
 
-AMD OSRC Tapper Team, C<< <tapper at amd64.org> >>
+AMD OSRC Tapper Team <tapper@amd64.org>
 
-=head1 COPYRIGHT & LICENSE
+=head1 COPYRIGHT AND LICENSE
 
-Copyright 2008-2011 AMD OSRC Tapper Team, all rights reserved.
+This software is Copyright (c) 2012 by Advanced Micro Devices, Inc..
 
-This program is released under the following license: proprietary
+This is free software, licensed under:
 
+  The (two-clause) FreeBSD License
 
 =cut
+
+
+__END__
+
 

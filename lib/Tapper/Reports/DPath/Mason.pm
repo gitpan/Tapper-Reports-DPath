@@ -1,23 +1,41 @@
-use MooseX::Declare;
-
-use 5.010;
-
 ## no critic (RequireUseStrict)
-class Tapper::Reports::DPath::Mason {
+package Tapper::Reports::DPath::Mason;
+BEGIN {
+  $Tapper::Reports::DPath::Mason::AUTHORITY = 'cpan:AMD';
+}
+{
+  $Tapper::Reports::DPath::Mason::VERSION = '4.0.1';
+}
+# ABSTRACT: Mix DPath into Mason templates
+
+        use 5.010;
+        use Moose;
+
         use HTML::Mason;
         use Cwd 'cwd';
         use Data::Dumper;
         use File::ShareDir 'module_dir';
 
-        has debug => ( is => 'rw');
+        has debug           => ( is => 'rw');
+        has puresqlabstract => ( is => 'rw', default => 0);
 
-        method render (:$file?, :$template?) {
-                return $self->render_file     ($file) if $file;
+        sub render {
+                my ($self, %args) = @_;
+
+                my $file     = $args{file};
+                my $template = $args{template};
+
+                return $self->render_file     ($file)     if $file;
                 return $self->render_template ($template) if $template;
         }
-        method render_template ($template) {
+
+        sub render_template {
+                my ($self, $template) = @_;
+
                 my $outbuf;
                 my $comp_root = module_dir('Tapper::Reports::DPath::Mason');
+
+                local $Tapper::Reports::DPath::puresqlabstract = $self->puresqlabstract;
                 my $interp = new HTML::Mason::Interp
                     (
                      use_object_files => 1,
@@ -50,7 +68,8 @@ class Tapper::Reports::DPath::Mason {
                 return $outbuf;
         }
 
-        method render_file ($file) {
+        sub render_file {
+                my ($self, $file) = @_;
 
                 # must be absolute to mason, although meant relative in real world
                 $file = "/$file" unless $file =~ m(^/);
@@ -79,11 +98,14 @@ class Tapper::Reports::DPath::Mason {
                 }
                 return $outbuf;
         }
-}
 
 1;
 
-__END__
+
+
+=pod
+
+=encoding utf-8
 
 =head1 NAME
 
@@ -95,24 +117,34 @@ Tapper::Reports::DPath::Mason - Mix DPath into Mason templates
     $result = render file => $filename;
     $result = render template => $string;
 
-=head1 EXPORT
-
-=head1 METHODS and FUNCTIONS
+=head1 METHODS
 
 =head2 render
 
-Renders a template.
+Render file or template.
+
+=head2 render_file
+
+Render file.
+
+=head2 render_template
+
+Render template.
 
 =head1 AUTHOR
 
-AMD OSRC Tapper Team, C<< <tapper at amd64.org> >>
+AMD OSRC Tapper Team <tapper@amd64.org>
 
-=head1 COPYRIGHT & LICENSE
+=head1 COPYRIGHT AND LICENSE
 
-Copyright 2008-2011 AMD OSRC Tapper Team, all rights reserved.
+This software is Copyright (c) 2012 by Advanced Micro Devices, Inc..
 
-This program is released under the following license: proprietary
+This is free software, licensed under:
 
+  The (two-clause) FreeBSD License
 
 =cut
+
+
+__END__
 

@@ -1,38 +1,76 @@
+
 use strict;
 use warnings;
 
-use inc::Module::Install;
+use 5.010;
 
-name     'Tapper-Reports-DPath';
-all_from 'lib/Tapper/Reports/DPath.pm';
-author   'AMD OSRC Tapper Team <tapper@amd64.org>';
-license  'freebsd';
+use ExtUtils::MakeMaker 6.30;
 
-requires 'perl'                  => 5.010;
-requires 'JSON'                  => 0;
-requires 'parent'                => 0;
-requires 'DateTime'              => 0;
-requires 'Template'              => 0;
-requires 'HTML::Mason'           => "1.40";
-requires 'Data::DPath'           => '0.33';
-requires 'Sub::Exporter'         => '0.982';
-requires 'File::ShareDir'        => 0;
-requires 'MooseX::Declare'       => "0.34";
-requires 'Tapper::Config' => "3.000010";
-requires 'Tapper::Schema' => "3.000010";
-requires 'Tapper::Model' => "3.000010";
-requires 'Cache::FileCache'      => 0;
-requires 'Data::Structure::Util' => 0;
 
-build_requires 'Test::More';
-build_requires 'Test::Perl::Critic';
-build_requires 'Tapper::Schema::TestTools' => "3.000010";
-build_requires 'Test::Fixture::DBIC::Schema';
 
-author_requires 'Module::Install::WriteAll';
+my %WriteMakefileArgs = (
+  "ABSTRACT" => "Tapper - Extended DPath functionality for Tapper reports",
+  "AUTHOR" => "AMD OSRC Tapper Team <tapper\@amd64.org>",
+  "BUILD_REQUIRES" => {
+    "Class::C3" => 0,
+    "MRO::Compat" => 0,
+    "Tapper::Schema::TestTools" => 0,
+    "Test::Deep" => 0,
+    "Test::Fixture::DBIC::Schema" => 0,
+    "Test::More" => "0.88"
+  },
+  "CONFIGURE_REQUIRES" => {
+    "ExtUtils::MakeMaker" => "6.30"
+  },
+  "DISTNAME" => "Tapper-Reports-DPath",
+  "EXE_FILES" => [],
+  "LICENSE" => "open_source",
+  "NAME" => "Tapper::Reports::DPath",
+  "PREREQ_PM" => {
+    "CHI" => 0,
+    "Cwd" => 0,
+    "Data::DPath" => 0,
+    "Data::DPath::Path" => 0,
+    "Data::Dumper" => 0,
+    "Data::Structure::Util" => 0,
+    "DateTime" => 0,
+    "File::ShareDir" => 0,
+    "HTML::Mason" => 0,
+    "JSON" => 0,
+    "Moose" => 0,
+    "Sub::Exporter" => 0,
+    "Tapper::Model" => 0,
+    "Template" => 0,
+    "Template::Stash" => 0,
+    "Text::Balanced" => 0,
+    "YAML::XS" => 0,
+    "strict" => 0,
+    "warnings" => 0
+  },
+  "VERSION" => "4.0.1",
+  "test" => {
+    "TESTS" => "t/*.t"
+  }
+);
 
-repository 'git://github.com/amd/Tapper-Reports-DPath.git';
-bugtracker 'http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Tapper-Reports-DPath';
 
-WriteAll;
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
+  my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};
+  my $pp = $WriteMakefileArgs{PREREQ_PM};
+  for my $mod ( keys %$br ) {
+    if ( exists $pp->{$mod} ) {
+      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod};
+    }
+    else {
+      $pp->{$mod} = $br->{$mod};
+    }
+  }
+}
+
+delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
+  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
+
+WriteMakefile(%WriteMakefileArgs);
+
+
 
