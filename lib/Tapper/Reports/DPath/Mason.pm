@@ -4,7 +4,7 @@ BEGIN {
   $Tapper::Reports::DPath::Mason::AUTHORITY = 'cpan:AMD';
 }
 {
-  $Tapper::Reports::DPath::Mason::VERSION = '4.0.1';
+  $Tapper::Reports::DPath::Mason::VERSION = '4.0.2';
 }
 # ABSTRACT: Mix DPath into Mason templates
 

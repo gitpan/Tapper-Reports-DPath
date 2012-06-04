@@ -4,7 +4,7 @@ BEGIN {
   $Tapper::Reports::DPath::AUTHORITY = 'cpan:AMD';
 }
 {
-  $Tapper::Reports::DPath::VERSION = '4.0.1';
+  $Tapper::Reports::DPath::VERSION = '4.0.2';
 }
 # ABSTRACT: Tapper - Extended DPath functionality for Tapper reports
 
