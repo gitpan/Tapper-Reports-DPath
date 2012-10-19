@@ -25,6 +25,4 @@ t/release-no-tabs.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/tapper_reports_dpath.t
-t/tapper_schema_reportsdb_test.sqlite
-t/tapper_schema_testrundb_test.sqlite
 xt/critic.t

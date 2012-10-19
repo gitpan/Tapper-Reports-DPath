@@ -1,10 +1,12 @@
 ## no critic (RequireUseStrict)
 package Tapper::Reports::DPath;
+# git description: v4.0.2-2-gb440a17
+
 BEGIN {
   $Tapper::Reports::DPath::AUTHORITY = 'cpan:AMD';
 }
 {
-  $Tapper::Reports::DPath::VERSION = '4.0.2';
+  $Tapper::Reports::DPath::VERSION = '4.1.0';
 }
 # ABSTRACT: Tapper - Extended DPath functionality for Tapper reports
 
@@ -338,7 +340,7 @@ BEGIN {
                 my ($report) = @_;
 
                 my $hwdb;
-                if (my $host  = model('TestrunDB')->resultset("Host")->search({name => $report->machine_name})->first) {
+                if (my $host  = model('TestrunDB')->resultset("Host")->search({name => $report->machine_name}, {rows => 1})->first) {
                         $hwdb = get_hardware_overview($host->id);
                 }
                 my %hardwaredb_overview = (defined($hwdb) and %$hwdb) ? (hardwaredb => $hwdb) : ();

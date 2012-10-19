@@ -1,5 +1,9 @@
 Revision history for Tapper-Reports-DPath
 
+4.1.0     2012-10-19
+        * PostgreSQL support
+        - [FIX] slow first() usage
+
 4.0.2     2012-06-04
         - explicitely upgrade troublemaker deps
 

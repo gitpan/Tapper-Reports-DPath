@@ -4,7 +4,7 @@ BEGIN {
   $Tapper::Reports::DPath::TT::AUTHORITY = 'cpan:AMD';
 }
 {
-  $Tapper::Reports::DPath::TT::VERSION = '4.0.2';
+  $Tapper::Reports::DPath::TT::VERSION = '4.1.0';
 }
 # ABSTRACT: Mix DPath into Template-Toolkit templates
 
