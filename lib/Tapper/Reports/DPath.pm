@@ -1,12 +1,12 @@
 ## no critic (RequireUseStrict)
 package Tapper::Reports::DPath;
-# git description: v4.0.2-2-gb440a17
+# git description: v4.1.0-1-g62d4fb9
 
 BEGIN {
-  $Tapper::Reports::DPath::AUTHORITY = 'cpan:AMD';
+  $Tapper::Reports::DPath::AUTHORITY = 'cpan:TAPPER';
 }
 {
-  $Tapper::Reports::DPath::VERSION = '4.1.0';
+  $Tapper::Reports::DPath::VERSION = '4.1.1';
 }
 # ABSTRACT: Tapper - Extended DPath functionality for Tapper reports
 

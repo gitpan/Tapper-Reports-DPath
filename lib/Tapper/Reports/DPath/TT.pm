@@ -1,10 +1,10 @@
 ## no critic (RequireUseStrict)
 package Tapper::Reports::DPath::TT;
 BEGIN {
-  $Tapper::Reports::DPath::TT::AUTHORITY = 'cpan:AMD';
+  $Tapper::Reports::DPath::TT::AUTHORITY = 'cpan:TAPPER';
 }
 {
-  $Tapper::Reports::DPath::TT::VERSION = '4.1.0';
+  $Tapper::Reports::DPath::TT::VERSION = '4.1.1';
 }
 # ABSTRACT: Mix DPath into Template-Toolkit templates
 

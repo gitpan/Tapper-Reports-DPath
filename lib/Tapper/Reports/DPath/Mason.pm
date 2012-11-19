@@ -1,10 +1,10 @@
 ## no critic (RequireUseStrict)
 package Tapper::Reports::DPath::Mason;
 BEGIN {
-  $Tapper::Reports::DPath::Mason::AUTHORITY = 'cpan:AMD';
+  $Tapper::Reports::DPath::Mason::AUTHORITY = 'cpan:TAPPER';
 }
 {
-  $Tapper::Reports::DPath::Mason::VERSION = '4.1.0';
+  $Tapper::Reports::DPath::Mason::VERSION = '4.1.1';
 }
 # ABSTRACT: Mix DPath into Mason templates
 
